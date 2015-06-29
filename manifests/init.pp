@@ -13,9 +13,16 @@ define ssh_keygen($home=undef) {
   }
 
   exec { "ssh_keygen-${name}":
-    command => "ssh-keygen -f \"${home_real}/.ssh/id_rsa\" -N '' -C 'puppet generated key'",
-    user    => $name,
-    creates => "${home_real}/.ssh/id_rsa",
+    command => shellquote('ssh-keygen',
+                          '-f',
+                          "${ssh_key_fn}",
+                          '-N',
+                          '',
+                          '-C',
+                          'puppet generated key')
+    user    => $ssh_user,
+    creates => ["${ssk_key_fn}",
+                "${ssh_key_fn}.pub"],
   }
 
 }
